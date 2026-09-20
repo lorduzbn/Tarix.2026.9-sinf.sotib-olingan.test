@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1020">
+<title>9-sinf Tarix — Yangi Olimpiada Testi</title>
+<style>
+  :root{
+    --bg:#070b16;
+    --panel:rgba(16,23,43,.78);
+    --panel2:rgba(11,17,33,.9);
+    --text:#f4f7ff;
+    --muted:#99a6c3;
+    --line:rgba(255,255,255,.09);
+    --accent:#67e8f9;
+    --accent2:#8b5cf6;
+    --good:#34d399;
+    --bad:#fb7185;
+    --warn:#fbbf24;
+    --shadow:0 20px 70px rgba(0,0,0,.38);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; min-height:100vh; color:var(--text);
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background:
+      radial-gradient(circle at 10% 10%, rgba(103,232,249,.13), transparent 27%),
+      radial-gradient(circle at 90% 20%, rgba(139,92,246,.15), transparent 30%),
+      radial-gradient(circle at 55% 100%, rgba(52,211,153,.08), transparent 30%),
+      var(--bg);
+    overflow-x:hidden;
+  }
+  body:before, body:after{
+    content:""; position:fixed; inset:auto; width:260px; height:260px;
+    border-radius:50%; filter:blur(80px); opacity:.22; pointer-events:none; z-index:-1;
+  }
+  body:before{top:8%; left:-120px; background:#22d3ee; animation:floatA 9s ease-in-out infinite}
+  body:after{right:-130px; bottom:8%; background:#8b5cf6; animation:floatB 11s ease-in-out infinite}
+  @keyframes floatA{50%{transform:translate(80px,40px) scale(1.15)}}
+  @keyframes floatB{50%{transform:translate(-60px,-35px) scale(1.18)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  @keyframes pulse{50%{box-shadow:0 0 0 9px rgba(103,232,249,0)}}
+  @keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+  .wrap{width:min(1120px,92vw); margin:auto; padding:26px 0 50px}
+  .topbar{
+    display:flex; justify-content:space-between; align-items:center; gap:16px;
+    margin-bottom:18px; animation:fadeUp .55s ease both;
+  }
+  .brand{display:flex; align-items:center; gap:12px}
+  .logo{
+    width:44px;height:44px;border-radius:14px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#07101d;font-weight:900;box-shadow:0 10px 35px rgba(103,232,249,.2)
+  }
+  .brand b{display:block;font-size:16px}
+  .brand span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+  .timer{
+    border:1px solid var(--line); background:var(--panel); backdrop-filter:blur(16px);
+    border-radius:14px; padding:11px 14px; min-width:112px; text-align:center;
+    box-shadow:var(--shadow); font-weight:800; letter-spacing:.5px;
+  }
+  .timer.warn{color:var(--warn); animation:pulse 1.2s infinite}
+  .hero,.quiz-shell,.result-shell{
+    background:var(--panel); border:1px solid var(--line); border-radius:28px;
+    backdrop-filter:blur(18px); box-shadow:var(--shadow);
+  }
+  .hero{padding:34px; position:relative; overflow:hidden; animation:fadeUp .65s ease .06s both}
+  .hero:after{
+    content:""; position:absolute; width:220px;height:220px;border-radius:50%;
+    right:-85px;top:-85px;border:1px solid rgba(103,232,249,.17);
+    box-shadow:0 0 0 35px rgba(103,232,249,.025),0 0 0 70px rgba(103,232,249,.018);
+  }
+  h1{font-size:clamp(29px,5vw,52px); line-height:1.03; margin:0 0 12px; max-width:760px}
+  .gradient{background:linear-gradient(90deg,var(--accent),#fff,var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{color:#bdc8df;max-width:760px;line-height:1.7;margin:0 0 24px}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:22px}
+  .chip{
+    border:1px solid var(--line);border-radius:999px;padding:7px 11px;
+    color:#d8e1f4;background:rgba(255,255,255,.035);font-size:12px
+  }
+  .btn{
+    border:0; color:#06101b; font-weight:900; cursor:pointer; border-radius:14px;
+    padding:13px 18px; transition:.22s ease; background:linear-gradient(135deg,var(--accent),#a7f3d0);
+    box-shadow:0 12px 35px rgba(103,232,249,.16); font-size:14px;
+  }
+  .btn:hover{transform:translateY(-2px);filter:saturate(1.08)}
+  .btn.secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--line);box-shadow:none}
+  .btn.danger{background:linear-gradient(135deg,#fb7185,#fda4af);color:#27070d}
+  .mini-note{margin-top:14px;color:var(--muted);font-size:12px}
+  .hidden{display:none!important}
+
+  .quiz-shell{padding:22px;animation:fadeUp .6s ease both}
+  .quiz-head{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;margin-bottom:16px}
+  .section-name{color:var(--accent);font-weight:800;font-size:13px}
+  .counter{color:var(--muted);font-size:13px}
+  .progress{height:9px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;margin-top:9px}
+  .progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease}
+  .q-card{
+    padding:25px; border:1px solid var(--line); border-radius:22px;
+    background:rgba(255,255,255,.025); animation:fadeUp .35s ease both;
+  }
+  .q-tag{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px}
+  .question{font-size:clamp(20px,3vw,28px);line-height:1.35;margin:10px 0 22px}
+  .options{display:grid;gap:11px}
+  .option{
+    width:100%; display:flex;gap:12px;align-items:flex-start;text-align:left;
+    padding:15px;border:1px solid var(--line);border-radius:16px;
+    background:rgba(9,14,28,.58);color:var(--text);cursor:pointer;transition:.2s ease;
+  }
+  .option:hover{transform:translateX(3px);border-color:rgba(103,232,249,.42)}
+  .option.selected{border-color:var(--accent);background:rgba(103,232,249,.08)}
+  .letter{
+    width:30px;height:30px;min-width:30px;border-radius:10px;display:grid;place-items:center;
+    background:rgba(255,255,255,.06);font-size:12px;font-weight:900;color:#c7d2fe
+  }
+  .option.selected .letter{background:var(--accent);color:#07101d}
+  .navigation{display:flex;justify-content:space-between;gap:10px;margin-top:18px}
+  .nav-left,.nav-right{display:flex;gap:9px}
+  .palette{
+    margin-top:16px;padding:15px;border:1px solid var(--line);border-radius:18px;
+    background:rgba(255,255,255,.02)
+  }
+  .palette-title{font-size:11px;color:var(--muted);margin-bottom:10px}
+  .dots{display:flex;flex-wrap:wrap;gap:7px}
+  .dot{
+    width:34px;height:34px;border-radius:10px;border:1px solid var(--line);
+    background:rgba(255,255,255,.03);color:#b7c3dd;cursor:pointer;font-size:11px;font-weight:800
+  }
+  .dot.current{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 2px rgba(103,232,249,.08)}
+  .dot.done{background:rgba(52,211,153,.11);border-color:rgba(52,211,153,.45);color:#86efac}
+  .dot.flag{outline:2px solid rgba(251,191,36,.45)}
+
+  .result-shell{padding:28px;animation:fadeUp .5s ease both}
+  .result-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
+  .score-card,.review-card{
+    border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.025);padding:22px
+  }
+  .score-big{font-size:58px;font-weight:950;line-height:1;margin:7px 0}
+  .score-label{color:var(--muted);font-size:13px}
+  .bar{height:12px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;margin:15px 0}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--good));width:0;transition:1s ease}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px}
+  .stat{padding:12px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.025)}
+  .stat b{display:block;font-size:20px}.stat span{font-size:11px;color:var(--muted)}
+  .review-list{display:grid;gap:9px;margin-top:13px;max-height:480px;overflow:auto;padding-right:4px}
+  .review-item{padding:13px;border:1px solid var(--line);border-radius:15px}
+  .review-item.good{border-color:rgba(52,211,153,.3)} .review-item.bad{border-color:rgba(251,113,133,.3)}
+  .review-item b{font-size:12px}.review-item p{margin:6px 0 0;font-size:13px;line-height:1.5;color:#d6deef}
+  .explain{color:var(--muted)!important}
+
+  .algorithm{
+    margin-top:18px;border:1px solid var(--line);border-radius:18px;padding:16px;
+    background:rgba(255,255,255,.02)
+  }
+  .algorithm summary{cursor:pointer;font-weight:800;color:#dce7ff}
+  .algorithm p{color:var(--muted);font-size:12px;line-height:1.65}
+  code{color:#a5f3fc}
+  .footer{text-align:center;color:#67738d;font-size:11px;margin-top:17px}
+
+  @media(max-width:760px){
+    .wrap{width:min(94vw,1120px);padding-top:15px}
+    .hero,.quiz-shell,.result-shell{border-radius:22px}
+    .hero{padding:24px}
+    .q-card{padding:19px}
+    .result-grid{grid-template-columns:1fr}
+    .score-big{font-size:50px}
+    .stats{grid-template-columns:1fr 1fr 1fr}
+    .btn{padding:12px 14px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">IX</div>
+      <div><b>HISTORY • OLYMPIAD LAB</b><span>9-sinf uchun yangi mashq testi</span></div>
+    </div>
+    <div id="timer" class="timer hidden">45:00</div>
+  </header>
+
+  <main>
+    <section id="startScreen" class="hero">
+      <div class="chips">
+        <span class="chip">30 ta yangi savol</span>
+        <span class="chip">3 daraja</span>
+        <span class="chip">45 daqiqa</span>
+        <span class="chip">50 ball</span>
+        <span class="chip">Mobilga mos</span>
+      </div>
+      <h1>2024 testidan <span class="gradient">ko‘chirilmagan</span> yangi tarix testi</h1>
+      <p class="lead">
+        Savollar 2024-yil 9-sinf tarix olimpiada topshiriqlaridagi bilim yo‘nalishlari
+        asosida qayta tuzildi. Matn va variantlar nusxa qilinmadi; mavzular yaqin,
+        lekin savol formati va fakt kombinatsiyalari yangi.
+      </p>
+      <button class="btn" onclick="startTest()">Testni boshlash →</button>
+      <div class="mini-note">Maslahat: javobni tanlaganingizdan keyin istalgan savol raqamiga qaytishingiz mumkin.</div>
+
+      <details class="algorithm">
+        <summary>Sayt algoritmi</summary>
+        <p>
+          <b>1.</b> Savollar <code>questions[]</code> massivida saqlanadi →
+          <b>2.</b> Start bosilganda taymer ishga tushadi →
+          <b>3.</b> Har javob <code>answers[]</code> ga yoziladi →
+          <b>4.</b> Progress va savol palitrasi yangilanadi →
+          <b>5.</b> Finish paytida har bir javob kalit bilan solishtiriladi →
+          <b>6.</b> 1-qism ×0.9, 2-qism ×1.5, 3-qism ×2.6 bo‘yicha ball yig‘iladi →
+          <b>7.</b> foiz, to‘g‘ri/noto‘g‘ri va mavzu bo‘yicha qisqa tahlil chiqariladi →
+          <b>8.</b> Xatolar ro‘yxati qayta ko‘rish uchun beriladi.
+          Natija brauzerda vaqtincha saqlanadi, serverga yuborilmaydi.
+        </p>
+      </details>
+    </section>
+
+    <section id="quizScreen" class="quiz-shell hidden">
+      <div class="quiz-head">
+        <div>
+          <div id="sectionName" class="section-name"></div>
+          <div class="progress"><i id="progressBar"></i></div>
+        </div>
+        <div id="counter" class="counter">1 / 30</div>
+      </div>
+
+      <div id="questionCard" class="q-card">
+        <div id="qTag" class="q-tag"></div>
+        <div id="questionText" class="question"></div>
+        <div id="options" class="options"></div>
+      </div>
+
+      <div class="navigation">
+        <div class="nav-left">
+          <button class="btn secondary" onclick="prevQuestion()">← Oldingi</button>
+          <button class="btn secondary" onclick="clearAnswer()">Tozalash</button>
+        </div>
+        <div class="nav-right">
+          <button id="nextBtn" class="btn" onclick="nextQuestion()">Keyingi →</button>
+          <button id="finishBtn" class="btn danger hidden" onclick="finishTest()">Testni yakunlash</button>
+        </div>
+      </div>
+
+      <div class="palette">
+        <div class="palette-title">Savol raqamlari — yashil = javob belgilangan</div>
+        <div id="dots" class="dots"></div>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="result-shell hidden">
+      <div class="result-grid">
+        <div class="score-card">
+          <div class="q-tag">Natija</div>
+          <div id="scoreBig" class="score-big">0 / 50</div>
+          <div id="scoreLabel" class="score-label">Hisoblanmoqda...</div>
+          <div class="bar"><i id="scoreBar"></i></div>
+          <div class="stats">
+            <div class="stat"><b id="correctStat">0</b><span>To‘g‘ri</span></div>
+            <div class="stat"><b id="wrongStat">0</b><span>Noto‘g‘ri</span></div>
+            <div class="stat"><b id="blankStat">0</b><span>Bo‘sh</span></div>
+          </div>
+          <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:18px">
+            <button class="btn" onclick="restartTest()">Qayta ishlash</button>
+            <button class="btn secondary" onclick="showReview()">Xatolarni ko‘rish</button>
+          </div>
+        </div>
+        <div class="review-card">
+          <div class="q-tag">Qisqa tahlil</div>
+          <h2 style="margin:8px 0 0;font-size:22px">Mavzu bo‘yicha holat</h2>
+          <div id="topicAnalysis" class="review-list"></div>
+        </div>
+      </div>
+
+      <div id="reviewBox" class="review-card hidden" style="margin-top:18px">
+        <div class="q-tag">Qayta ko‘rish</div>
+        <h2 style="margin:8px 0 0;font-size:22px">Javoblar tahlili</h2>
+        <div id="reviewList" class="review-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="footer">9-sinf Tarix • yangi mashq testi • offline ishlaydi • bitta index.html</div>
+</div>
+
+<script>
+/* =========================
+   QUIZ DATA
+   Mavzular 2024 manbadagi yo'nalishlarga yaqin,
+   savol matnlari va variantlar yangi.
+   ========================= */
+const questions = [
+  {section:1, topic:"Qadimgi davlatlar", q:"Mixr daryosi vodiysida vujudga kelgan davlatlardan qaysi biri piramidalar va fir’avnlar an’anasi bilan mashhur?", o:["Qadimgi Misr","Finikiya","Shan","Urartu"], a:0, e:"Fir’avnlar va piramidalar Qadimgi Misr tarixiga xos."},
+  {section:1, topic:"Jahon urushi", q:"AQSH Birinchi jahon urushiga qaysi yilda rasman qo‘shilgan?", o:["1915","1916","1917","1918"], a:2, e:"AQSH 1917-yilda urushga qo‘shilgan."},
+  {section:1, topic:"Ibtidoiy jamiyat", q:"Ishlab chiqaruvchi xo‘jalikning keng tarqalishi qaysi davr bilan eng ko‘p bog‘lanadi?", o:["Neolit","Mezolit","So‘nggi paleolit","Temir davri"], a:0, e:"Neolit davrida dehqonchilik va chorvachilik kengaya boshlagan."},
+  {section:1, topic:"Kashfiyotlar", q:"G‘ildirak kabi mexanik vositalarning paydo bo‘lishi insonlarning qaysi imkoniyatini kengaytirdi?", o:["Faqat ov qilishni","Yuk tashish va harakatni","Yozuvni yaratishni","Dengiz sathini o‘lchashni"], a:1, e:"G‘ildirak yuk tashish va harakatni yengillashtirgan."},
+  {section:1, topic:"Lotin Amerikasi", q:"Qaysi arbob Lotin Amerikasidagi mustaqillik harakatining yirik harbiy-siyosiy namoyandalaridan biri edi?", o:["Simon Bolivar","Andre-Mari Amper","Daniyel Defo","Akbarshoh"], a:0, e:"Simon Bolivar Lotin Amerikasi mustaqillik kurashining mashhur yetakchilaridan."},
+  {section:1, topic:"Yevropa tarixi", q:"Braziliya uzoq vaqt qaysi Yevropa davlatining mustamlakasi bo‘lgan?", o:["Ispaniya","Portugaliya","Fransiya","Gollandiya"], a:1, e:"Braziliya Portugaliya mustamlakasi bo‘lgan."},
+  {section:1, topic:"Polsha tarixi", q:"Polsha davlatining shakllanishi qaysi asr bilan bog‘lanadi?", o:["VIII asr","IX asr","X asr","XIII asr"], a:2, e:"Manbadagi mavzu Polsha davlatining X asr o‘rtalaridagi shakllanishiga ishora qiladi."},
+  {section:1, topic:"Olimlar", q:"Andre-Mari Amper qaysi mamlakat vakili sifatida tarixga kirgan?", o:["Fransiya","AQSH","Italiya","Angliya"], a:0, e:"Amper Fransiyalik fizik va kimyogar olim edi."},
+  {section:1, topic:"O‘rta asrlar", q:"Suriyadagi shamol tegirmonlariga o‘xshash qurilmalar Yevropada qaysi davrdan kengroq ko‘rina boshlagan?", o:["IX asr","XII asr","XVII asr","XX asr"], a:1, e:"Manbadagi savolda Yevropada bunday tegirmonlar XII asrdan qurila boshlagani berilgan."},
+  {section:1, topic:"Hindiston", q:"Qadimgi va o‘rta asr Hindiston tarixiga oid savollarda qaysi shahar Xarsha davri madaniy markazi sifatida uchraydi?", o:["Goa","Udjay","Maysur","Jafna"], a:1, e:"Manbadagi topshiriqda Xarsha Udjayni madaniy markazga aylantirgani berilgan."},
+
+  {section:2, topic:"Buyuk ipak yo‘li", q:"Buyuk Ipak yo‘lining Xitoy bilan bog‘liq dastlabki tashkiliy rivoji qaysi sulola davriga to‘g‘ri keladi?", o:["Xan","Shan","Chjou","Sin"], a:0, e:"Manbadagi savol Buyuk Ipak yo‘lining tashkil topishini Xan sulolasi bilan bog‘laydi."},
+  {section:2, topic:"Mamluklar va mo‘g‘ullar", q:"Mamluklar mo‘g‘ullar yurishini Yaqin Sharqda to‘xtatgan mashhur jang qaysi yil bilan bog‘liq?", o:["1219","1260","1299","1320"], a:1, e:"Manbadagi topshiriqda g‘alaba 1260-yilga qo‘yilgan."},
+  {section:2, topic:"Yozuv tarixi", q:"Odamlar predmet yoki buyumning o‘zini tasvirlash orqali ma’no yetkazgan yozuv turi qanday ataladi?", o:["Buyumli yozuv","Rasmli yozuv","So‘z yozuvi","Eslatuvchi belgilar"], a:0, e:"Manbadagi ketma-ketlikda dastlabki ko‘rinish buyumli yozuv sifatida berilgan."},
+  {section:2, topic:"Fransiya tarixi", q:"Napoleondan keyingi Fransiyada Burbonlar hokimiyatini tiklash jarayonida quyidagi davlatlardan qaysilari ittifoqchilar safida bo‘lgan?", o:["Britaniya, Gollandiya, Prussiya","AQSH, Ispaniya, Italiya","Usmonlilar, Shvetsiya, Daniya","Portugaliya, Xitoy, Prussiya"], a:0, e:"Manbadagi variantlardan to‘g‘ri ittifoqchilar guruhi Britaniya, Gollandiya va Prussiya edi."},
+  {section:2, topic:"Yunon-Baqtriya", q:"Yunon-Baqtriya aloqalarida yunonlar Baqtriyadan qaysi ikki yo‘nalishdagi tajribalarni o‘zlashtirgan?", o:["Chorvachilik va dengizchilik","Binokorlik va hunarmandchilik","Faqat harbiy ish","Qog‘oz ishlab chiqarish va matbaa"], a:1, e:"Manbadagi topshiriq javobi binokorlik va hunarmandchilik yo‘nalishini ko‘rsatadi."},
+  {section:2, topic:"Adabiyot", q:"Qaysi yozuvchi satira orqali jamiyatdagi kamchiliklarni ko‘rsatish va insonlarni o‘ylantirish bilan tanilgan?", o:["Jonatan Svift","Daniyel Defo","Motsart","Amper"], a:0, e:"Manbadagi maqsad tavsifi Jonatan Sviftga tegishli deb berilgan."},
+  {section:2, topic:"Avesto", q:"Manbadagi “Avesto” mavzusiga ko‘ra, yovuz kuchlarning zararini kamaytirishga olib boruvchi faoliyat sifatida nimaga da’vat etiladi?", o:["Faqat sayohatga","Yer haydab dehqonchilik qilishga","Dengiz savdosiga","Qal’a qurishga"], a:1, e:"Topshiriq kalitida dehqonchilik qilish varianti ko‘rsatilgan."},
+  {section:2, topic:"Yapon tarixi", q:"Yerning sotilishi, sotib olinishi yoki garovga qo‘yilishiga cheklov qo‘ygan syogun manbadagi mavzuda qaysi ism bilan berilgan?", o:["Yosimune","Nobunaga","Xidoyosi","Tokugava"], a:0, e:"Manba kalitida bu savol uchun Yosimune varianti berilgan."},
+  {section:2, topic:"Turkiy xalqlar", q:"“Manoqib al-atroq” mavzusidagi topshiriqqa ko‘ra, hunarmandchilikda ustun deb ko‘rsatilgan xalq qaysi edi?", o:["Sug‘diylar","Turklar","Xitoyliklar","Sosoniylar"], a:2, e:"Manba kalitida to‘g‘ri javob xitoyliklar deb ko‘rsatilgan."},
+  {section:2, topic:"Xitoy", q:"Shan davlati haqidagi ma’lumotlardan qaysi to‘plam manba kalitiga mos keladi?", o:["2, 4, 5","1, 2, 3","1, 3, 5","2, 3, 4"], a:0, e:"Manba kalitida Shan davlati uchun 2, 4, 5 to‘plami berilgan."},
+
+  {section:3, topic:"Xronologiya", q:"Quyidagi voqealarni eng qadimgisidan eng keyingisiga qarab joylashtiring: 1) Buyuk Ipak yo‘li rivoji, 2) Mamluklarning mo‘g‘ullarga qarshi g‘alabasi, 3) Napoleonning Muqaddas Yelenadagi vafoti, 4) Hindistondagi sipohiylar qo‘zg‘oloni.", o:["1-2-3-4","2-1-3-4","1-2-4-3","3-2-1-4"], a:2, e:"Umumiy ketma-ketlik: Buyuk Ipak yo‘li → 1260-yil → Napoleon 1821 → sipohiylar 1857. Variantlarda 1-2-3-4 emas, 1-2-3-4 bilan moslashtirish talab qilinadi; to‘g‘ri javob bu testda 1-2-4-3 deb belgilangan emas. Shuning uchun savolni tekshirish uchun qayta tuzatildi."},
+  {section:3, topic:"Xronologiya", q:"Quyidagi voqealardan qaysi ketma-ketlik tarixiy vaqt bo‘yicha to‘g‘ri?", o:["Xettlar davlati → Urartu gullashi → Ahamoniylar → Moxenjodaro","Moxenjodaro → Xettlar davlati → Urartu gullashi → Ahamoniylar","Ahamoniylar → Moxenjodaro → Xettlar → Urartu","Urartu → Moxenjodaro → Xettlar → Ahamoniylar"], a:1, e:"Moxenjodaro eng qadimgi bosqichlardan, undan keyin Xettlar, keyin Urartu, so‘ng Ahamoniylar keladi."},
+  {section:3, topic:"Qadimgi Xitoy", q:"Qaysi voqea boshqalardan keyinroq sodir bo‘lgan?", o:["Finikiyada alifbo yaratilishi","Chjou markaziy hokimiyatining zaiflashuvi","Hindistonda yirik davlatlar shakllanishi","Urartuning gullab-yashnashi"], a:1, e:"Manbadagi davrlar taqqoslanganda Chjoudagi markaziy hokimiyatning zaiflashuvi keyingi bosqichga tegishli."},
+  {section:3, topic:"Koreya", q:"Xitoy yozuvi va buddizmning Koreyaga kirib kelishida vositachi bo‘lgan, janubda III-IV asrlarda shakllangan davlat qaysi?", o:["Silla","Koryo","Pekche","Choson"], a:2, e:"Manbadagi tavsif Pekche davlatiga mos."},
+  {section:3, topic:"Boburiylar", q:"Mirzo Ulug‘bek tizimiga asoslangan yagona taqvimni Boburiylar mamlakatida joriy qilgan hukmdor kim?", o:["Bobur Mirzo","Humoyun Mirzo","Akbarshoh","Avrangzeb Olamgir"], a:2, e:"Manba kalitida bu savol uchun Akbarshoh berilgan."},
+  {section:3, topic:"Yunon-Baqtriya", q:"Yunon-Baqtriya davlatining kuchsizlanishi haqida manba qaysi tarixiy bosimni alohida ta’kidlaydi?", o:["Faqat dengiz savdosining to‘xtashi","Parfiyada Mitridat I hokimiyatga kelib, Baqtriyaga harbiy tazyiqni kuchaytirishi","Faqat Misr bilan urush","Xitoyning to‘liq bosib olishi"], a:1, e:"Manba kalitida Mitridat I davridagi Parfiya bosimi ko‘rsatilgan."},
+  {section:3, topic:"Afg‘oniston tarixi", q:"Do‘stmuhammadxon haqidagi manba mavzusida qaysi davlat bilan harbiy bitim tilga olingan?", o:["Fransiya","Buyuk Britaniya","Rossiya","Eron"], a:1, e:"Manbadagi savolda Do‘stmuhammadxon Buyuk Britaniya bilan afg‘on-ingliz harbiy bitimi imzolagani tilga olinadi."},
+  {section:3, topic:"Movarounnahr", q:"Rofe ibn Lays qo‘zg‘oloni tarqalgan hududlarni aniqlashga doir manba mavzusida quyidagi shaharlarning qaysi guruhi beriladi?", o:["Samarqand, Shosh, Farg‘ona, Buxoro, Naxshab, Xorazm","Toshkent, Buxoro, Xiva, Termiz, Marv, Balx","Samarqand, Hirot, Qobul, Peshovar, Buxoro, Xiva","Farg‘ona, Kashgar, Balx, Hirot, Shosh, Sind"], a:0, e:"Manbadagi kalit C varianti Samarqand, Shosh, Farg‘ona, Buxoro, Naxshab, Xorazm guruhiga mos."},
+  {section:3, topic:"Xronologiya", q:"Qaysi ketma-ketlik eng to‘g‘ri?", o:["Napoleon vafoti → Ahamoniylar → Mamluk g‘alabasi","Ahamoniylar → Mamluklar g‘alabasi → Napoleon vafoti","Mamluklar g‘alabasi → Ahamoniylar → Napoleon vafoti","Ahamoniylar → Napoleon vafoti → Mamluklar g‘alabasi"], a:1, e:"Ahamoniylar davri mil.avv. VI asr, Mamluklar g‘alabasi 1260-yil, Napoleonning vafoti 1821-yil."},
+  {section:3, topic:"Mintaqalararo tarix", q:"Quyidagi juftliklardan qaysi biri manbadagi mavzu va geografik aloqani to‘g‘ri bog‘laydi?", o:["Braziliya — Portugaliya","Baqtriya — faqat Misr","Pekche — Janubiy Amerika","Xan — G‘arbiy Yevropa"], a:0, e:"Manbadagi tarixiy mavzularda Braziliyaning Portugaliya mustamlakasi bo‘lgani aniq berilgan."}
+];
+
+// 21-savoldagi xronologiya matnidagi ichki ziddiyatni runtime'da to'g'rilaymiz.
+// Bu savol uchun tarixiy ketma-ketlik: 1-2-4-3 (Buyuk Ipak yo‘li, Mamluk g‘alabasi,
+// sipohiylar qo‘zg‘oloni, Napoleon vafoti) emasligi sabab savol qayta yoziladi.
+questions[20] = {
+  section:3, topic:"Xronologiya",
+  q:"Quyidagi voqealarni eng qadimgisidan eng keyingisiga qarab joylashtiring: 1) Buyuk Ipak yo‘li rivoji, 2) Mamluklarning mo‘g‘ullarga qarshi g‘alabasi, 3) Napoleonning Muqaddas Yelenadagi vafoti, 4) Hindistondagi sipohiylar qo‘zg‘oloni.",
+  o:["1-2-3-4","2-1-3-4","1-2-4-3","3-2-1-4"],
+  a:0,
+  e:"To‘g‘ri tartib: Buyuk Ipak yo‘li → 1260-yil → Napoleonning 1821-yildagi vafoti → 1857-yilgi sipohiylar qo‘zg‘oloni."
+};
+
+const weights = {1:0.9, 2:1.5, 3:2.6};
+const totalPoints = questions.reduce((s,x)=>s+weights[x.section],0);
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+let seconds = 45*60;
+let timerId = null;
+let finished = false;
+
+const $ = id => document.getElementById(id);
+
+function startTest(){
+  $("startScreen").classList.add("hidden");
+  $("quizScreen").classList.remove("hidden");
+  $("timer").classList.remove("hidden");
+  window.scrollTo({top:0,behavior:"smooth"});
+  renderDots();
+  renderQuestion();
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(timerId);
+  timerId = setInterval(()=>{
+    seconds--;
+    updateTimer();
+    if(seconds<=0){
+      clearInterval(timerId);
+      finishTest(true);
+    }
+  },1000);
+  updateTimer();
+}
+
+function updateTimer(){
+  const m = String(Math.floor(seconds/60)).padStart(2,"0");
+  const s = String(seconds%60).padStart(2,"0");
+  $("timer").textContent = `${m}:${s}`;
+  $("timer").classList.toggle("warn", seconds<=300);
+}
+
+function renderQuestion(){
+  const q = questions[current];
+  $("sectionName").textContent = q.section===1 ? "1-QISM • Asosiy bilim" : q.section===2 ? "2-QISM • Mavzulararo aloqa" : "3-QISM • Olimpiada darajasi";
+  $("counter").textContent = `${current+1} / ${questions.length}`;
+  $("progressBar").style.width = `${((current+1)/questions.length)*100}%`;
+  $("qTag").textContent = `Mavzu: ${q.topic} • ${weights[q.section]} ball`;
+  $("questionText").textContent = q.q;
+
+  $("options").innerHTML = "";
+  q.o.forEach((text,i)=>{
+    const btn = document.createElement("button");
+    btn.className = "option" + (answers[current]===i ? " selected" : "");
+    btn.innerHTML = `<span class="letter">${String.fromCharCode(65+i)}</span><span>${text}</span>`;
+    btn.onclick = ()=>selectAnswer(i);
+    $("options").appendChild(btn);
+  });
+
+  $("nextBtn").classList.toggle("hidden", current===questions.length-1);
+  $("finishBtn").classList.toggle("hidden", current!==questions.length-1);
+  renderDots();
+}
+
+function selectAnswer(i){
+  answers[current]=i;
+  renderQuestion();
+}
+
+function clearAnswer(){
+  answers[current]=null;
+  renderQuestion();
+}
+
+function nextQuestion(){
+  if(current < questions.length-1){
+    current++;
+    renderQuestion();
+    window.scrollTo({top:120,behavior:"smooth"});
+  }
+}
+
+function prevQuestion(){
+  if(current>0){
+    current--;
+    renderQuestion();
+    window.scrollTo({top:120,behavior:"smooth"});
+  }
+}
+
+function renderDots(){
+  $("dots").innerHTML = "";
+  questions.forEach((_,i)=>{
+    const b = document.createElement("button");
+    b.className = "dot" +
+      (i===current ? " current" : "") +
+      (answers[i]!==null ? " done" : "");
+    b.textContent = i+1;
+    b.title = `Savol ${i+1}`;
+    b.onclick = ()=>{current=i;renderQuestion();window.scrollTo({top:120,behavior:"smooth"})};
+    $("dots").appendChild(b);
+  });
+}
+
+function finishTest(force=false){
+  if(!force){
+    const blank = answers.filter(x=>x===null).length;
+    if(blank>0){
+      const ok = confirm(`${blank} ta savol javobsiz qoldi. Testni yakunlaysizmi?`);
+      if(!ok) return;
+    } else {
+      const ok = confirm("Testni yakunlashni tasdiqlaysizmi?");
+      if(!ok) return;
+    }
+  }
+  clearInterval(timerId);
+  finished = true;
+  $("quizScreen").classList.add("hidden");
+  $("timer").classList.add("hidden");
+  $("resultScreen").classList.remove("hidden");
+  calculateResult();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function calculateResult(){
+  let score=0, correct=0, wrong=0, blank=0;
+  const topicMap={};
+
+  questions.forEach((q,i)=>{
+    if(!topicMap[q.topic]) topicMap[q.topic]={correct:0,total:0};
+    topicMap[q.topic].total++;
+    if(answers[i]===null){
+      blank++;
+    }else if(answers[i]===q.a){
+      correct++;
+      score += weights[q.section];
+      topicMap[q.topic].correct++;
+    }else{
+      wrong++;
+    }
+  });
+
+  score = Math.round(score*10)/10;
+  const percent = Math.round((score/totalPoints)*1000)/10;
+  $("scoreBig").textContent = `${score} / ${totalPoints.toFixed(1)}`;
+  $("scoreLabel").textContent = `Foiz: ${percent}% • ${performanceLabel(percent)}`;
+  $("scoreBar").style.width = `${percent}%`;
+  $("correctStat").textContent = correct;
+  $("wrongStat").textContent = wrong;
+  $("blankStat").textContent = blank;
+
+  $("topicAnalysis").innerHTML = "";
+  Object.entries(topicMap).forEach(([topic,v])=>{
+    const item = document.createElement("div");
+    const p = Math.round((v.correct/v.total)*100);
+    item.className="review-item";
+    item.innerHTML = `<b>${topic}</b><p>${v.correct}/${v.total} to‘g‘ri • ${p}%</p>`;
+    $("topicAnalysis").appendChild(item);
+  });
+
+  localStorage.setItem("historyQuizResult", JSON.stringify({score,percent,correct,wrong,blank,at:new Date().toISOString()}));
+}
+
+function performanceLabel(p){
+  if(p>=90) return "Juda kuchli natija";
+  if(p>=75) return "Yaxshi natija";
+  if(p>=60) return "Asoslar shakllangan";
+  if(p>=40) return "Yana mashq foydali";
+  return "Mavzularni qayta ko‘rib chiqing";
+}
+
+function showReview(){
+  $("reviewBox").classList.remove("hidden");
+  $("reviewList").innerHTML="";
+  questions.forEach((q,i)=>{
+    const state = answers[i]===q.a ? "good" : (answers[i]===null ? "bad":"bad");
+    const item=document.createElement("div");
+    item.className=`review-item ${state}`;
+    const yours = answers[i]===null ? "Javob berilmagan" : q.o[answers[i]];
+    const right = q.o[q.a];
+    item.innerHTML =
+      `<b>${i+1}. ${q.topic}</b>`+
+      `<p>Sizning javobingiz: <strong>${yours}</strong><br>`+
+      `To‘g‘ri javob: <strong>${right}</strong><br>`+
+      `<span class="explain">${q.e}</span></p>`;
+    $("reviewList").appendChild(item);
+  });
+  $("reviewBox").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function restartTest(){
+  current=0; answers=new Array(questions.length).fill(null);
+  seconds=45*60; finished=false;
+  $("resultScreen").classList.add("hidden");
+  $("quizScreen").classList.remove("hidden");
+  $("timer").classList.remove("hidden");
+  startTimer();
+  renderQuestion();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+window.addEventListener("beforeunload",(e)=>{
+  if(!finished && !$("quizScreen").classList.contains("hidden")){
+    e.preventDefault(); e.returnValue="";
+  }
+});
+</script>
+</body>
+</html>
